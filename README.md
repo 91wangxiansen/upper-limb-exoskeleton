@@ -26,4 +26,4 @@
 
 第三方驱动与资源的版权信息见手部项目内的`LICENSE`、`THIRD_PARTY.md`及各依赖源文件声明。
 
-仓库发布源码、运行配置、模型、驱动库、启动脚本和测试。历史程序、演示视频和旧备份在本机“旧文件”中归档；本地依赖、运行日志、数据集和构建缓存由`.gitignore`排除。
+演示视频链接https://www.bilibili.com/video/BV1oKsU6fE5k/?vd_source=2a57870915cf82f4fca6aeef582bccb8
