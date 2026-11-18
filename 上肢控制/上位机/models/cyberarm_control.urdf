@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="cyberarm_urdf2.SLDASM">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.10692 0.016601 -0.1854"
+        rpy="0 0 0" />
+      <mass
+        value="0.36451" />
+      <inertia
+        ixx="0.00053853"
+        ixy="-8.1781E-05"
+        ixz="-0.00011883"
+        iyy="0.00046041"
+        iyz="-9.9764E-05"
+        izz="0.00037081" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="link1">
+    <inertial>
+      <origin
+        xyz="0.06627 0.056115 0.0865"
+        rpy="0 0 0" />
+      <mass
+        value="0.061135" />
+      <inertia
+        ixx="8.7528E-05"
+        ixy="-1.2108E-06"
+        ixz="-2.7121E-06"
+        iyy="3.9687E-05"
+        iyz="2.0734E-05"
+        izz="0.00011433" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint1"
+    type="fixed">
+    <origin
+      xyz="-0.0701717590001402 0.0531724286246159 0.00355141515877654"
+      rpy="-2.93259701099267 0.507242142320357 1.51430009723705" />
+    <parent
+      link="base_link" />
+    <child
+      link="link1" />
+  </joint>
+  <link
+    name="link2">
+    <inertial>
+      <origin
+        xyz="-0.14849 2.1016E-06 0.062032"
+        rpy="0 0 0" />
+      <mass
+        value="0.29642" />
+      <inertia
+        ixx="0.00024848"
+        ixy="-1.2092E-06"
+        ixz="-0.00029477"
+        iyy="0.0011411"
+        iyz="7.7428E-09"
+        izz="0.0011957" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint2"
+    type="fixed">
+    <origin
+      xyz="0.068372895819077 0.0711132059832496 0"
+      rpy="0 0 -1.21460370612378" />
+    <parent
+      link="link1" />
+    <child
+      link="link2" />
+  </joint>
+  <link
+    name="link3">
+    <inertial>
+      <origin
+        xyz="-0.1024 -0.0026504 -0.030151"
+        rpy="0 0 0" />
+      <mass
+        value="0.14584" />
+      <inertia
+        ixx="9.6972E-05"
+        ixy="-6.8875E-07"
+        ixz="-3.5416E-06"
+        iyy="0.00050233"
+        iyz="1.9836E-05"
+        izz="0.00056879" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cyberarm_urdf2.SLDASM/meshes/link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint3"
+    type="revolute">
+    <origin
+      xyz="-0.299156074607025 0.000310186832812698 0"
+      rpy="3.14159265358979 0 1.52239348834035" />
+    <parent
+      link="link2" />
+    <child
+      link="link3" />
+    <axis
+      xyz="0.00987647212406145 0.265789135286706 0.963980596724814" />
+    <limit
+      lower="0.174532925199433"
+      upper="1.5707963267949"
+      effort="3"
+      velocity="0.3" />
+  </joint>
+</robot>

@@ -1,0 +1,96 @@
+{
+  "schema_version": 2,
+  "motion_policy": {
+    "arrival_tolerance_deg": 1.5,
+    "arrival_speed_rad_s": 0.03,
+    "arrival_dwell_s": 0.5,
+    "stall_error_deg": 3.0,
+    "stall_speed_rad_s": 0.02,
+    "stall_torque_ratio": 0.9,
+    "stall_timeout_s": 2.0,
+    "gravity_ramp_s": 1.0,
+    "convergence_timeout_s": 8.0,
+    "hold_error_deg": 10.0,
+    "hold_error_timeout_s": 1.0
+  },
+  "gravity": {
+    "enabled": false,
+    "calibrated": false,
+    "shoulder_angle_sign": 1,
+    "elbow_angle_sign": 1,
+    "shoulder_offset_deg": -90.0,
+    "elbow_offset_deg": 0.0,
+    "shoulder_fixed_moment_nm": 1.39872366,
+    "forearm_moment_nm": 0.05592679,
+    "calibration_zeros_rad": {
+      "elbow": -0.8718896342945168,
+      "shoulder": -0.5643217932106364
+    },
+    "calibration_directions": {
+      "elbow": 1,
+      "shoulder": 1
+    }
+  },
+  "load_compensation": {
+    "enabled": true,
+    "strategy": "tracking_support",
+    "ki_nm_per_rad_s": 2.0,
+    "maximum_bias_nm": 2.5,
+    "maximum_rate_nm_s": 0.4,
+    "deadband_deg": 0.2,
+    "maximum_error_deg": 15.0,
+    "tracking_error_rate_rad_s": 0.12,
+    "position_kp": 12.0,
+    "velocity_kd": 1.5
+  },
+  "bus": {
+    "port": "COM11",
+    "serial_baud": 921600,
+    "can_bitrate": 1000000,
+    "host_can_id": 253
+  },
+  "joints": {
+    "elbow": {
+      "display_name": "肘关节",
+      "motor_can_id": 127,
+      "expected_uid": "034C3B8A2093B015",
+      "commissioned": true,
+      "limits_confirmed": true,
+      "direction": 1,
+      "software_zero_rad": -0.987706951011889,
+      "minimum_angle_deg": 0.0,
+      "maximum_angle_deg": 90.0,
+      "maximum_speed_rad_s": 0.3,
+      "default_speed_rad_s": 0.3,
+      "maximum_torque_nm": 5.0,
+      "default_torque_limit_nm": 3.5,
+      "maximum_acceleration_rad_s2": 0.2,
+      "hard_limit_margin_deg": 5.0,
+      "motion_kp": 3.0,
+      "motion_kd": 1.0
+    },
+    "shoulder": {
+      "display_name": "肩/大臂关节",
+      "motor_can_id": 126,
+      "expected_uid": "3A4B3B8A2093B015",
+      "commissioned": true,
+      "limits_confirmed": true,
+      "direction": 1,
+      "software_zero_rad": -0.5321077051170633,
+      "minimum_angle_deg": -45.0,
+      "maximum_angle_deg": 90.0,
+      "maximum_speed_rad_s": 0.3,
+      "default_speed_rad_s": 0.3,
+      "maximum_torque_nm": 5.0,
+      "default_torque_limit_nm": 3.5,
+      "maximum_acceleration_rad_s2": 0.2,
+      "hard_limit_margin_deg": 5.0,
+      "motion_kp": 3.0,
+      "motion_kd": 1.0
+    }
+  },
+  "legacy_zero_candidates_rad": {
+    "motor_127_from_original_copy": -0.42089240098448855,
+    "motor_126_from_migrated_copy": -0.4761165520020434
+  }
+}

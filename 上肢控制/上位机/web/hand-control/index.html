@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>四指外骨骼 · 控制台</title><link rel="stylesheet" href="styles.css">
+<script type="importmap">{"imports":{"three":"../vendor/three.module.js"}}</script></head>
+<body><header><div><small>HAND EXOSKELETON</small><h1>四指外骨骼控制台</h1></div><div class="header-actions"><a class="back-link" href="/">← 返回全上肢</a><button id="connectHand">连接手部</button><button id="disconnectHand">断开通信</button><strong id="status">连接中</strong></div></header>
+<main><section class="model"><div class="row"><h2>关节孪生</h2><button id="resetView">复位视角</button></div><div id="viewport"><span id="modelMsg">加载装配模型…</span></div><div class="legend"><i></i>反馈姿态 <i class="ghost"></i>目标姿态</div><p>拖动指节调整屈曲，拖动空白处旋转视角。每指一个驱动自由度，指间关节按连杆联动估算。</p></section>
+<section class="controls"><nav><button data-tab="joints" class="sel">手指</button><button data-tab="gestures">手势</button><button data-tab="setup">配置</button></nav>
+<div id="joints" class="pane"><h2>手指闭合量</h2><div id="sliders"></div><label class="check"><input type="checkbox" id="live"> 拖动时同步控制</label><div class="row"><button id="apply">执行目标姿态</button><button class="primary" id="grip">开始抓握</button></div>
+<div class="speed-control"><label for="motionSpeed">运动速度上限：<output id="motionSpeedValue">100</output> 编码步/秒</label><input id="motionSpeed" type="range" min="20" max="500" step="10" value="100"><button id="saveSpeed">应用四指速度</button><p id="speedCurrent">等待速度设置</p><p>运动中先“停止并保持”再调速；各指也可在配置页单独设置。抓握保留小步进与负载停止。</p></div></div>
+<div id="gestures" class="pane" hidden><h2>手势库</h2><label>当前目标姿态名称<input id="name" maxlength="24" placeholder="例如：剪刀手"></label><button id="save">保存当前目标</button><label>已保存手势<select id="gesture"></select></label><div class="row"><button id="load">预览姿态</button><button id="play" class="primary">执行手势</button><button id="remove">删除</button></div></div>
+<div id="setup" class="pane" hidden><h2>单舵机 ID 设置</h2>
+<p>改号时只连接待设置的一只舵机。出厂默认 ID 为 1。搜索不能区分多个相同 ID 的舵机。</p>
+<button id="scanIDs">搜索 ID（1～20）</button><p id="foundIDs" role="status">尚未搜索</p>
+<div class="row"><label>原 ID<input id="oldID" type="number" min="1" max="20" value="1"></label><label>新 ID<input id="newID" type="number" min="1" max="20" value="2"></label></div>
+<button id="setID">写入新 ID</button><p id="idResult" role="status"></p>
+<p>建议食指 1、中指 2、无名指 3、小指 4。每次改号后先确认结果，再断电更换下一只；全部设置后一起连接。</p>
+<h2>四指校准</h2><p>填写实际 ID、张开和闭合位置（编码值），负载阈值使用舵机原始读数。</p><div id="cal"></div><label class="check"><input id="verified" type="checkbox"> 已逐指核对安装方向和行程</label><button id="saveConfig">保存校准</button></div>
+<div class="actions"><button id="arm">启用控制</button><button id="stop">停止并保持</button><button id="release" class="release">关闭舵机驱动</button></div><p id="notice" role="status">等待反馈</p><p id="connectionPolicy">等待确认控制板的断连处理方式。</p><p>关闭驱动不会解锁齿轮或连杆，手指仍可能无法自由活动；张开手指需要主动运行到标定姿态。</p></section>
+<section class="tele"><div class="row"><h2>舵机反馈</h2><select aria-label="曲线数据" id="metric"><option value="load">负载读数</option><option value="p">位置编码值</option><option value="speed">速度读数</option><option value="temp">温度 °C</option><option value="v">电压 V</option></select></div><div id="cards"></div><canvas id="chart" aria-label="四指最近 30 秒反馈曲线"></canvas><p>最近 30 秒 · 负载为舵机反馈读数，指尖力需另行标定。</p></section></main>
+<script type="module" src="boot.js"></script></body></html>

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>上肢外骨骼 · 统一上位机</title>
+  <link rel="stylesheet" href="/styles.css?v=2.3.3-live-and-target">
+  <script type="importmap">{"imports":{"three":"/vendor/three.module.js"}}</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><strong>上肢外骨骼</strong></div>
+    <nav class="device-nav" aria-label="设备控制区">
+      <button id="showArm" class="icon-button active" aria-pressed="true" aria-controls="armWorkspace">肩肘控制</button>
+      <button id="showHand" class="icon-button" aria-pressed="false" aria-controls="handWorkspace">手指控制</button>
+    </nav>
+    <div class="system-strip">
+      <span class="device-pill">手臂 <span id="connectionPill" class="pill offline"><i></i><b>离线</b></span></span>
+      <span class="device-pill">手部 <span id="handPill" class="pill offline"><i></i><b>离线</b></span></span>
+      <span class="clock" id="clock">--:--:--</span>
+      <button id="stopButton" class="emergency"><span>■</span> 停止肩肘电机</button>
+    </div>
+  </header>
+
+  <main id="armWorkspace" class="dashboard">
+    <aside class="telemetry-column" aria-label="数据曲线侧栏">
+      <section class="telemetry panel">
+        <div class="telemetry-header"><div><span class="eyebrow" title="网页显示滤波：100毫秒分段平均，低通时间常数0.35秒；横轴按已有数据展开，最多60秒">显示滤波 · 最近 60 s</span><h2>数据曲线</h2></div></div>
+        <div class="chart-legend"><span><i class="shoulder-line"></i>肩关节</span><span><i class="elbow-line"></i>肘关节</span></div>
+        <div class="charts">
+          <article class="chart-card"><header><b>角度</b><span>°</span></header><canvas id="positionChart" aria-label="最近60秒肩肘角度曲线"></canvas></article>
+          <article class="chart-card"><header><b>速度</b><span>rad/s</span></header><canvas id="velocityChart" aria-label="最近60秒肩肘速度曲线"></canvas></article>
+          <article class="chart-card"><header><b>力矩</b><span>Nm</span></header><canvas id="torqueChart" aria-label="最近60秒肩肘反馈力矩曲线"></canvas></article>
+          <article class="chart-card"><header><b>温度</b><span>°C</span></header><canvas id="temperatureChart" aria-label="最近60秒肩肘温度曲线"></canvas></article>
+        </div>
+      </section>
+    </aside>
+    <div class="visual-column">
+    <section class="scene-card panel">
+      <div class="panel-heading">
+        <div><span class="eyebrow">DIGITAL TWIN</span><h1>全上肢姿态</h1></div>
+        <div class="scene-tools"><button id="openHandConsole" class="icon-button">手部控制</button><button id="frontView" class="icon-button">正视</button></div>
+      </div>
+      <div id="viewport" class="viewport">
+        <div class="view-corner top-left"><span class="live-dot"></span><span id="poseStatus" role="status">等待双关节位置反馈</span></div>
+        <div class="legend"><span><i class="actual"></i>实体：实际位置</span><span><i class="target"></i>透明：目标预览</span></div>
+        <div id="dragTip" class="drag-tip">点击手部进入完整控制台<br>拖动模型预览姿态，点击对应按钮执行</div>
+      </div>
+      <div class="scene-footer dual-footer">
+        <div><span>肩关节实际 / 目标</span><b id="shoulderPoseFooter">-- / --</b></div>
+        <div><span>肘关节实际 / 目标</span><b id="elbowPoseFooter">-- / --</b></div>
+        <div><span>身份验证</span><b id="identityFooter">待连接</b></div>
+        <div><span>控制状态</span><b id="controlFooter">未使能</b></div>
+      </div>
+    </section>
+
+    <div class="assembly-note"><span id="handModelStatus">正在装配手部 CAD</span><span id="handPoseSummary">手部等待反馈</span></div>
+    <section class="events panel"><div class="events-title"><span>系统状态</span><b id="statusText" role="status">等待连接</b></div><details class="event-details"><summary>事件记录</summary><div id="eventLog" class="event-log"></div></details></section>
+    <section class="panel dataset-panel" aria-label="数据集记录与导出">
+      <details class="dataset-details"><summary>手臂数据记录与导出</summary>
+      <div class="events-title"><span>数据集</span><b id="datasetStatus" role="status">未开始记录</b></div>
+      <div class="button-row"><button id="datasetStart" class="button secondary" disabled>开始记录</button><button id="datasetFinish" class="button secondary" disabled>结束记录</button><a id="datasetDownload" class="button outline" aria-disabled="true">下载 ZIP</a></div>
+      <p class="hint">UTC 时间戳 · 原始反馈逐帧记录 · CSV＋字段字典／配置。结束记录不会停止电机。</p>
+      <p id="datasetPath" class="hint"></p>
+      </details>
+    </section>
+    </div>
+
+    <aside id="armControls" class="control-column">
+      <div class="control-scroll">
+      <section class="panel connection-panel">
+        <div class="link-row"><label><span class="sr-only">CANable 串口</span><select id="portSelect" aria-label="CANable 串口"><option>COM11</option></select></label><button id="connectButton" class="button primary">连接并识别</button></div>
+        <details id="deviceSetup" class="advanced-config"><summary>连接与双关节准备</summary>
+          <div class="button-row"><button id="refreshPorts" class="button secondary">刷新串口</button><button id="discoverButton" class="button secondary">重新识别 UID</button></div>
+          <p id="prepareGuide" class="setup-guide">连接后，确认两关节零点与安全范围，再启用运动。</p>
+          <div class="button-row"><button id="prepareAllButton" class="button outline">确认并启用双关节</button><button id="resetSafetyButton" class="button secondary">复位安全锁存</button></div>
+        </details>
+      </section>
+
+      <section class="panel joint-panel" data-joint="shoulder">
+        <div class="joint-heading"><div><h2>肩关节 <small>大臂 · 126</small></h2><span data-field="commission" class="joint-phase">待确认</span></div><div class="joint-measure"><b data-field="actual">--</b><small>° 实际</small></div></div>
+        <details class="advanced-config joint-setup"><summary>运动设置 / 零点</summary>
+        <div class="joint-health"><span data-field="identity">UID 未验证</span><span data-field="age">反馈 --</span></div>
+        <div class="joint-command"><label><span>速度 rad/s</span><input data-input="speed" type="number" min="0.02" step="0.01"></label><label><span>转矩限制 Nm</span><input data-input="torque" type="number" min="0.1" max="5" step="0.05"></label></div>
+        <div class="zero-state"><span>软件零点</span><b data-field="zero">未设置</b></div>
+        <div class="button-row"><button class="button secondary" data-action="zero">当前位置设为零点</button><button class="button outline" data-action="prepare">确认并启用</button></div>
+        <div class="joint-config">
+          <label><span>方向</span><select data-input="direction"><option value="1">+1</option><option value="-1">-1</option></select></label>
+          <label><span>最小角度 °</span><input data-input="minimum" type="number" step="0.5"></label>
+          <label><span>最大角度 °</span><input data-input="maximum" type="number" step="0.5"></label>
+          <label><span>最大速度 rad/s</span><input data-input="maxSpeed" type="number" min="0.02" max="0.30" step="0.01"></label>
+          <label><span>最大转矩 Nm</span><input data-input="maxTorque" type="number" min="0.1" max="5" step="0.05"></label>
+          <label><span>Kp</span><input data-input="kp" type="number" min="0" max="20" step="0.5"></label>
+          <label><span>Kd</span><input data-input="kd" type="number" min="0" max="5" step="0.05"></label>
+        </div></details>
+        <div class="joint-target"><label><span>目标角度 <output data-field="target">--</output></span><input data-input="target" type="range" step="0.5"></label><input data-input="targetNumber" aria-label="肩关节目标角度" type="number" step="0.5"></div>
+        <p class="readiness-note" data-field="readiness">连接后可准备关节</p>
+        <details class="advanced-config output-details"><summary>出力诊断</summary><div data-field="diagnostics" aria-label="肩关节出力诊断"></div></details>
+        <button class="button execute full" data-action="move">控制肩关节</button>
+      </section>
+
+      <section class="panel joint-panel" data-joint="elbow">
+        <div class="joint-heading"><div><h2>肘关节 <small>小臂 · 127</small></h2><span data-field="commission" class="joint-phase">待确认</span></div><div class="joint-measure"><b data-field="actual">--</b><small>° 实际</small></div></div>
+        <details class="advanced-config joint-setup"><summary>运动设置 / 零点</summary>
+        <div class="joint-health"><span data-field="identity">UID 未验证</span><span data-field="age">反馈 --</span></div>
+        <div class="joint-command"><label><span>速度 rad/s</span><input data-input="speed" type="number" min="0.02" step="0.01"></label><label><span>转矩限制 Nm</span><input data-input="torque" type="number" min="0.1" max="5" step="0.05"></label></div>
+        <div class="zero-state"><span>软件零点</span><b data-field="zero">未设置</b></div>
+        <div class="button-row"><button class="button secondary" data-action="zero">当前位置设为零点</button><button class="button outline" data-action="prepare">确认并启用</button></div>
+        <div class="joint-config">
+          <label><span>方向</span><select data-input="direction"><option value="1">+1</option><option value="-1">-1</option></select></label>
+          <label><span>最小角度 °</span><input data-input="minimum" type="number" step="0.5"></label>
+          <label><span>最大角度 °</span><input data-input="maximum" type="number" step="0.5"></label>
+          <label><span>最大速度 rad/s</span><input data-input="maxSpeed" type="number" min="0.02" max="0.30" step="0.01"></label>
+          <label><span>最大转矩 Nm</span><input data-input="maxTorque" type="number" min="0.1" max="5" step="0.05"></label>
+          <label><span>Kp</span><input data-input="kp" type="number" min="0" max="20" step="0.5"></label>
+          <label><span>Kd</span><input data-input="kd" type="number" min="0" max="5" step="0.05"></label>
+        </div></details>
+        <div class="joint-target"><label><span>目标角度 <output data-field="target">--</output></span><input data-input="target" type="range" step="0.5"></label><input data-input="targetNumber" aria-label="肘关节目标角度" type="number" step="0.5"></div>
+        <p class="readiness-note" data-field="readiness">连接后可准备关节</p>
+        <details class="advanced-config output-details"><summary>出力诊断</summary><div data-field="diagnostics" aria-label="肘关节出力诊断"></div></details>
+        <button class="button execute full" data-action="move">控制肘关节</button>
+      </section>
+
+      <details class="panel motion-settings-panel"><summary>运控模式与补偿参数</summary>
+        <p id="loadStatus" class="hint">默认关闭，不会自动运动。</p>
+        <form id="loadForm">
+          <label><span>控制模式</span><select id="loadMode"><option value="off">原 PD 控制（关闭负载补偿）</option><option value="tracking_support">负载承托（跟随 + 保持补偿）</option><option value="stationary_residual">静态补偿（仅稳定保持时学习）</option></select></label>
+          <p id="loadModeHint" class="hint"></p>
+          <div class="joint-config">
+            <label><span>承托档 Kp · 位置纠偏</span><input data-load="position_kp" type="number" min="0.1" max="20" step="any" required></label>
+            <label><span>承托档 Kd · 速度阻尼</span><input data-load="velocity_kd" type="number" min="0.1" max="5" step="any" required></label>
+            <label><span>Ki · 误差积分 Nm/(rad·s)</span><input data-load="ki_nm_per_rad_s" type="number" min="0.01" max="2" step="any" required></label>
+            <label><span>附加补偿上限 ±Nm</span><input data-load="maximum_bias_nm" type="number" min="0.05" max="2.5" step="any" required></label>
+            <label><span>补偿变化率 Nm/s</span><input data-load="maximum_rate_nm_s" type="number" min="0.01" max="0.4" step="any" required></label>
+            <label><span>误差死区 °</span><input data-load="deadband_deg" type="number" min="0.05" max="1" step="any" required></label>
+          </div>
+          <details class="advanced-config"><summary>补偿学习参数</summary><div class="joint-config">
+            <label><span>允许学习的最大误差 °</span><input data-load="maximum_error_deg" type="number" min="1" max="15" step="any" required></label>
+            <label><span>跟随误差变化率 rad/s</span><input data-load="tracking_error_rate_rad_s" type="number" min="0.02" max="0.15" step="any" required></label>
+          </div></details>
+          <p class="hint">总转矩上限仍以关节设置为准；承托功能未完成穿戴验证。</p>
+          <p id="loadSaveHint" class="hint" role="status"></p>
+          <div class="button-row"><button id="loadSave" type="submit" class="button outline">保存模式与参数</button><button id="loadRevert" type="button" class="button secondary">撤销未保存修改</button></div>
+        </form>
+      </details>
+      </div>
+      <section class="panel sync-panel" aria-label="双关节运动">
+        <button id="syncMoveButton" class="button execute full">执行肩肘目标</button>
+        <p class="hint">停止 / 断电会释放支撑力，请先支撑机构。</p>
+      </section>
+    </aside>
+
+
+  </main>
+  <section id="handWorkspace" hidden aria-label="完整手部控制台"><p id="handConsoleMessage">正在加载手部控制界面…</p><div id="handConsole"></div></section>
+
+
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-card"><span class="modal-kicker">SAFETY CONFIRMATION</span><h3 id="modalTitle">确认操作</h3><p id="modalText"></p><div class="modal-warning">确认机构固定或空载、无人穿戴、运动路径清空、电源限流合适，实体急停可用。</div><div class="button-row end"><button id="modalCancel" class="button secondary">取消</button><button id="modalConfirm" class="button execute">确认执行</button></div></div></div>
+  <div id="toast" class="toast"></div>
+  <script>window.addEventListener('error', e => { const el=document.getElementById('statusText'); if(el) el.textContent='界面脚本错误：'+e.message; });</script>
+  <script type="module" src="/app.js?v=2.3.3-dataset-v1"></script>
+  <script type="module" src="/workspace.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+# Local dependencies and Python caches
+.deps/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Browser profile (cookies, credentials, and machine-local state)
+.edge-debug-profile/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Temporary files and generated output
+*.log
+*.tmp
+*.bak
+tmp/
+output/
+outputs/
+datasets/
+.coverage
+htmlcov/
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
